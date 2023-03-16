@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "619808377910",
+    "firebase_url": "https://betreueranwendung-default-rtdb.firebaseio.com",
+    "project_id": "betreueranwendung",
+    "storage_bucket": "betreueranwendung.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619808377910:android:5e3fb4fda4b63a2d219c97",
+        "android_client_info": {
+          "package_name": "com.fortmeier.betreuerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619808377910-ovv8fjabij7l72e3utklsjhlcu0u16q6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_iut5pHEz2miaOwokIbWUD7kaI0Dv1us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619808377910-ovv8fjabij7l72e3utklsjhlcu0u16q6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

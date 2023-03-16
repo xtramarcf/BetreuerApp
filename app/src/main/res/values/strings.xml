@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">BetreuerApp</string>
+    <string name="register">Registrieren</string>
+    <string name="login">Anmelden</string>
+    <string name="password">Passwort</string>
+    <string name="e_mail">E-Mail</string>
+    <string name="name">Name</string>
+    <string name="firstName">Vorname</string>
+    <string-array name="tutor_student">
+        <item>Student</item>
+        <item>Betreuer</item>
+        <item>Zweitgutachter</item>
+    </string-array>
+    <string-array name="status">
+        <item>In Abstimmung</item>
+        <item>Angemeldet</item>
+        <item>Abgegeben</item>
+        <item>Kolloquium abgehalten</item>
+    </string-array>
+    <string-array name="bill_status">
+        <item>Rechnung noch nicht erstellt</item>
+        <item>Rechnung wurde gestellt</item>
+        <item>Rechnung beglichen</item>
+    </string-array>
+</resources>

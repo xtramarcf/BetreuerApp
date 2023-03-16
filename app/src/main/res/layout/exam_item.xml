@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginEnd="12dp"
+    app:cardBackgroundColor="#FFC107">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/tv_exam_theme_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:ellipsize="end"
+            android:text="Thema: "
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <TextView
+            android:id="@+id/tv_exam_theme_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_exam_theme_txt"
+            android:ellipsize="end"
+            android:text="Thema"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+        <TextView
+            android:id="@+id/tv_exam_subject_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_exam_theme_1"
+            android:text="Themenbereich:" />
+
+        <TextView
+            android:id="@+id/tv_exam_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@+id/tv_exam_theme_1"
+            android:layout_alignParentEnd="true"
+            android:text="Themenbereich" />
+
+        <TextView
+            android:id="@+id/tv_exam_student_name_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_exam_subject_txt"
+            android:text="Name des Studenten:" />
+
+        <TextView
+            android:id="@+id/tv_exam_student_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@+id/tv_exam_subject"
+            android:layout_alignParentEnd="true"
+            android:text="Name des Studenten:" />
+
+        <TextView
+            android:id="@+id/tv_exam_student_email_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_exam_student_name_txt"
+            android:text="E-Mail des Studenten:" />
+
+        <TextView
+            android:id="@+id/tv_exam_student_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@+id/tv_exam_student_name"
+            android:layout_alignParentEnd="true"
+            android:text="E-Mail des Studenten" />
+
+
+        <TextView
+            android:id="@+id/tv_exam_status_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_exam_student_email_txt"
+            android:text="Status:" />
+
+        <TextView
+            android:id="@+id/tv_exam_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@+id/tv_exam_student_email"
+            android:layout_alignParentEnd="true"
+            android:text="Status" />
+
+        <TextView
+            android:id="@+id/tv_exam_tutor_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_exam_status"
+            android:text="Betreuer:" />
+
+        <TextView
+            android:id="@+id/tv_exam_tutor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@id/tv_exam_status"
+            android:layout_alignParentEnd="true"
+            android:text="Betreuer" />
+
+        <TextView
+            android:id="@+id/tv_exam_second_assessor_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_exam_tutor"
+            android:text="Zweitgutachter:" />
+
+        <TextView
+            android:id="@+id/tv_exam_second_assessor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@id/tv_exam_tutor"
+            android:layout_alignParentEnd="true"
+            android:text="Zweitgutachter" />
+
+        <TextView
+            android:id="@+id/tv_exam_bill_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_exam_second_assessor"
+            android:text="Rechnungsstatus:" />
+
+        <TextView
+            android:id="@+id/tv_exam_bill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_below="@id/tv_exam_second_assessor"
+            android:layout_alignParentEnd="true"
+            android:text="Rechnungsstatus" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

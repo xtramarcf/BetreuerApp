@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="#D6D6D6"
+    tools:context=".tutor.OfferTopicActivity">
+
+    <TextView
+        android:id="@+id/tv_headline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginBottom="20dp"
+        android:text="Thema für Abschlussarbeit ausschreiben"
+        android:textAlignment="center"
+        android:textSize="32dp" />
+
+    <EditText
+        android:id="@+id/et_offer_topic_area_of_subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_offer_topic_subject"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Themenbereich"
+        android:inputType="textNoSuggestions" />
+
+    <EditText
+        android:id="@+id/et_offer_topic_subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_headline"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="10dp"
+        android:hint="Thema"
+        android:inputType="textNoSuggestions" />
+
+    <EditText
+        android:id="@+id/et_offer_topic_subject_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_offer_topic_area_of_subject"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="30dp"
+        android:hint="Beschreibung des Themas"
+        android:inputType="textNoSuggestions"
+        android:lineBreakStyle="normal" />
+
+    <Button
+        android:id="@+id/btn_offer_topic_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_offer_topic_subject_description"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="10dp"
+        android:text="Thema ausschreiben"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/btn_offer_topic_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_offer_topic_submit"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="20dp"
+        android:text="Abbrechen"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/tv_offer_topic_failure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_offer_topic_cancel"
+        android:textAlignment="center"
+        android:textColor="#FA0000"
+        android:textSize="20dp" />
+
+
+</RelativeLayout>

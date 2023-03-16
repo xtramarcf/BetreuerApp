@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D6D6D6"
+    tools:context=".tutor.ChatOverviewActivity">
+
+    <TextView
+        android:id="@+id/tv_search_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:text="Neuer Chat:"/>
+
+    <EditText
+        android:id="@+id/et_search_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_below="@+id/tv_search_contact"
+        android:hint="E-Mail"
+        />
+
+    <Button
+        android:id="@+id/btn_search_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="12dp"
+        android:layout_below="@+id/et_search_contact"
+        android:layout_marginBottom="12dp"
+        android:text="Suchen"/>
+
+    <TextView
+        android:id="@+id/tv_search_contact_failure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="12dp"
+        android:textSize="20dp"
+        android:layout_toRightOf="@+id/btn_search_contact"
+        android:layout_below="@+id/et_search_contact"
+        android:textColor="#FF0000"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_below="@+id/btn_search_contact"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/chatuser_item">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</RelativeLayout>
