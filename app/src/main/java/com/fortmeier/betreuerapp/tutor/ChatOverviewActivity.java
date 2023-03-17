@@ -20,9 +20,13 @@ import android.widget.Toast;
 import com.fortmeier.betreuerapp.ChatActivity;
 import com.fortmeier.betreuerapp.MainActivity;
 import com.fortmeier.betreuerapp.R;
+import com.fortmeier.betreuerapp.StudentActivity;
 import com.fortmeier.betreuerapp.model.User;
 import com.fortmeier.betreuerapp.viewmodel.ChatsOverviewAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -30,6 +34,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChatOverviewActivity extends AppCompatActivity {
@@ -41,6 +46,7 @@ public class ChatOverviewActivity extends AppCompatActivity {
     private EditText etSearchWithEmail;
     private Button btnSearch;
     private TextView tvFailure;
+    private HashMap<String, User> userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,8 @@ public class ChatOverviewActivity extends AppCompatActivity {
 
         userEmail = auth.getCurrentUser().getEmail();
 
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
+
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -66,7 +74,9 @@ public class ChatOverviewActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(user -> {
             Intent intent = new Intent(ChatOverviewActivity.this, ChatActivity.class);
             intent.putExtra("E-Mail", user.getEMail());
+            intent.putExtra("map", userData);
             startActivity(intent);
+            finish();
         });
         getAllUserChats();
 
@@ -77,7 +87,9 @@ public class ChatOverviewActivity extends AppCompatActivity {
                         tvFailure.setText("");
                         Intent intent = new Intent(ChatOverviewActivity.this, ChatActivity.class);
                         intent.putExtra("E-Mail", etSearchWithEmail.getText().toString());
+                        intent.putExtra("map", userData);
                         startActivity(intent);
+                        finish();
                     } else {
                         tvFailure.setText("Kontakt nicht gefunden!");
                     }
@@ -86,35 +98,24 @@ public class ChatOverviewActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getAllUserChats();
-    }
-
     private void getAllUserChats() {
-        String userName;
-        String userFirstName;
-        List<User> userChats = new ArrayList<>();
         db.collection("messages").document(userEmail).collection("contacts").orderBy("timeStampMilli", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
             List<User> chatContactList = task.getResult().toObjects(User.class);
+            List<User> userChats = new ArrayList<>();
             for (User contact : chatContactList) {
                 User user = new User();
                 user.setEMail(contact.getEMail());
                 user.setLastMessage(contact.getLastMessage());
                 user.setTimeStamp(contact.getTimeStamp());
-                db.collection("users").document(user.getEMail()).addSnapshotListener((value, error) -> {
-                    User userdata = value.toObject(User.class);
-                    user.setName(userdata.getName());
-                    user.setFirstName(userdata.getFirstName());
-                    userChats.add(user);
-                    adapter.setUsers(userChats);
-                    adapter.submitList(userChats);
-                });
+                user.setName(userData.get(contact.getEMail()).getName());
+                user.setFirstName(userData.get(contact.getEMail()).getFirstName());
+                userChats.add(user);
             }
+            adapter.setUsers(userChats);
+            adapter.submitList(userChats);
         });
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,10 +127,15 @@ public class ChatOverviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.logout) {
-            auth = FirebaseAuth.getInstance();
             auth.signOut();
             startActivity(new Intent(ChatOverviewActivity.this, MainActivity.class));
             Toast.makeText(this, "Sie wurden erfolgreich ausgeloggt!", Toast.LENGTH_SHORT).show();
+            finish();
+            return true;
+        } else if (item.getItemId() == R.id.back_arrow) {
+            Intent intent = new Intent(ChatOverviewActivity.this, TutorActivity.class);
+            intent.putExtra("map", userData);
+            startActivity(intent);
             finish();
             return true;
         } else {

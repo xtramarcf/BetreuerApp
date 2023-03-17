@@ -1,11 +1,9 @@
 package com.fortmeier.betreuerapp.viewmodel;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fortmeier.betreuerapp.R;
 import com.fortmeier.betreuerapp.model.ChatMessage;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 

@@ -14,7 +14,10 @@ import android.widget.Toast;
 
 import com.fortmeier.betreuerapp.MainActivity;
 import com.fortmeier.betreuerapp.R;
+import com.fortmeier.betreuerapp.model.User;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.HashMap;
 
 public class QuestTutorAddingActivity extends AppCompatActivity {
 
@@ -22,6 +25,7 @@ public class QuestTutorAddingActivity extends AppCompatActivity {
     private Button btnOfferTopic;
     private Button btnCreateExam;
     private Button btnBack;
+    private HashMap<String, User> userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +34,15 @@ public class QuestTutorAddingActivity extends AppCompatActivity {
         btnOfferTopic = findViewById(R.id.btn_post_topic);
         btnCreateExam = findViewById(R.id.btn_create_exam);
         btnBack = findViewById(R.id.btn_back);
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
+
 
         btnOfferTopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(QuestTutorAddingActivity.this, OfferTopicActivity.class));
+                Intent intent = new Intent(QuestTutorAddingActivity.this, OfferTopicActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });
@@ -42,7 +50,9 @@ public class QuestTutorAddingActivity extends AppCompatActivity {
         btnCreateExam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(QuestTutorAddingActivity.this, CreateExamActivity.class));
+                Intent intent = new Intent(QuestTutorAddingActivity.this, CreateExamActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });
@@ -50,7 +60,9 @@ public class QuestTutorAddingActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(QuestTutorAddingActivity.this, TutorActivity.class));
+                Intent intent = new Intent(QuestTutorAddingActivity.this, TutorActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });

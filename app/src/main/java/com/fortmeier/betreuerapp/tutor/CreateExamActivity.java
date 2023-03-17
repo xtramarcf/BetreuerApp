@@ -28,6 +28,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+
 public class CreateExamActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -45,6 +47,7 @@ public class CreateExamActivity extends AppCompatActivity {
     private TextView tvFailure;
     private String tutorFullName;
     private String tutorEMail;
+    private HashMap<String, User> userData;
 
 
     @Override
@@ -57,18 +60,10 @@ public class CreateExamActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         user = firebaseAuth.getCurrentUser();
         tutorEMail = user.getEmail();
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
 
-        DocumentReference docRef = db.collection("users").document(tutorEMail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
-                    User userData = doc.toObject(User.class);
-                    tutorFullName = userData.getName() + ", " + userData.getFirstName();
-                }
-            }
-        });
+
+        tutorFullName = userData.get(tutorEMail).getName() + ", " + userData.get(tutorEMail).getFirstName();
 
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +82,9 @@ public class CreateExamActivity extends AppCompatActivity {
                             tutorFullName);
                     db.collection("Exams").add(exam);
                     Toast.makeText(CreateExamActivity.this, "Die zu betreuende Abschlussarbeit wurde eingetragen!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(CreateExamActivity.this, TutorActivity.class));
+                    Intent intent = new Intent(CreateExamActivity.this, TutorActivity.class);
+                    intent.putExtra("map", userData);
+                    startActivity(intent);
                     finish();
                 }
             }
@@ -97,7 +94,9 @@ public class CreateExamActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(CreateExamActivity.this, TutorActivity.class));
+                Intent intent = new Intent(CreateExamActivity.this, TutorActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });

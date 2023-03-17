@@ -5,21 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fortmeier.betreuerapp.MainActivity;
 import com.fortmeier.betreuerapp.R;
-import com.fortmeier.betreuerapp.StudentActivity;
 import com.fortmeier.betreuerapp.TopicsActivity;
 import com.fortmeier.betreuerapp.model.Exam;
 import com.fortmeier.betreuerapp.model.User;
@@ -28,19 +24,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TutorActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
     private TutorViewAdapter adapter;
     private FloatingActionButton addExamTopic;
     private Button btnMessenger;
@@ -49,6 +45,7 @@ public class TutorActivity extends AppCompatActivity {
     private String userEmail;
     private String userName;
     private String userFirstName;
+    private HashMap<String, User> userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,30 +56,11 @@ public class TutorActivity extends AppCompatActivity {
         btnTopics = findViewById(R.id.btn_topics);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         userEmail = firebaseAuth.getCurrentUser().getEmail();
-        FirebaseFirestore.getInstance().collection("users").document(userEmail).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                userType = task.getResult().toObject(User.class).getUserType();
-                if (userType.equals("Zweitgutachter")) {
-                    addExamTopic.setVisibility(View.GONE);
-                    btnTopics.setVisibility(View.GONE);
-                } else {
-                    adapter.setOnItemClickListener(new TutorViewAdapter.OnItemCLickListener() {
-                        @Override
-                        public void onItemClick(Exam exam) {
-                            Intent intent = new Intent(TutorActivity.this, EditExamActivity.class);
-                            intent.putExtra("Exam", exam);
-                            startActivity(intent);
-                        }
-                    });
-                }
-            }
-        });
 
-
-
-
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
+        userType = userData.get(userEmail).getUserType();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.hasFixedSize();
 
@@ -90,25 +68,51 @@ public class TutorActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
+        if (userType.equals("Zweitgutachter")) {
+            addExamTopic.setVisibility(View.GONE);
+            btnTopics.setVisibility(View.GONE);
+        } else {
+            adapter.setOnItemClickListener(new TutorViewAdapter.OnItemCLickListener() {
+                @Override
+                public void onItemClick(Exam exam) {
+                    Intent intent = new Intent(TutorActivity.this, EditExamActivity.class);
+                    intent.putExtra("Exam", exam);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+        }
+
+
+
+
         addExamTopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(TutorActivity.this, QuestTutorAddingActivity.class));
+                Intent intent = new Intent(TutorActivity.this, QuestTutorAddingActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
+                finish();
             }
         });
 
         btnTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(TutorActivity.this, TopicsActivity.class));
-                Toast.makeText(TutorActivity.this, "Drücken um Ausschreibung zu löschen!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(TutorActivity.this, TopicsActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
+                finish();
             }
         });
 
         btnMessenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(TutorActivity.this, ChatOverviewActivity.class));
+                Intent intent = new Intent(TutorActivity.this, ChatOverviewActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -116,26 +120,15 @@ public class TutorActivity extends AppCompatActivity {
         getAllExams();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getAllExams();
-    }
 
     public void getAllExams() {
         List<Exam> exams = new ArrayList<>();
 
 
-        FirebaseFirestore.getInstance().collection("users").document(userEmail).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                userName = task.getResult().toObject(User.class).getName();
-                userFirstName = task.getResult().toObject(User.class).getFirstName();
-            }
-        });
+        userName = userData.get(userEmail).getName();
+        userFirstName = userData.get(userEmail).getFirstName();
 
-
-        FirebaseFirestore.getInstance().collection("Exams").
+        db.collection("Exams").
                 get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -153,9 +146,9 @@ public class TutorActivity extends AppCompatActivity {
                                             doc.get("tutorEMail").toString(),
                                             doc.get("tutorFullName").toString());
                                     exam.setId(doc.getId());
-                                    String fullUserName = userName+", "+userFirstName;
-                                    if(exam.getSecondAssessorName().equals(userName) && exam.getSecondAssessorFirstName().equals(userFirstName)
-                                            || exam.getTutorFullName().equals(fullUserName)){
+                                    String fullUserName = userName + ", " + userFirstName;
+                                    if (exam.getSecondAssessorName().equals(userName) && exam.getSecondAssessorFirstName().equals(userFirstName)
+                                            || exam.getTutorFullName().equals(fullUserName)) {
                                         exams.add(exam);
                                     }
                                 } catch (Exception e) {
@@ -178,7 +171,7 @@ public class TutorActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.logout) {
+        if (item.getItemId() == R.id.logout || item.getItemId() == R.id.back_arrow) {
             firebaseAuth.signOut();
             startActivity(new Intent(TutorActivity.this, MainActivity.class));
             Toast.makeText(this, "Sie wurden erfolgreich ausgeloggt!", Toast.LENGTH_SHORT).show();

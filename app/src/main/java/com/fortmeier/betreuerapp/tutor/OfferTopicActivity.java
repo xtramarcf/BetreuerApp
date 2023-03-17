@@ -26,6 +26,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+
 public class OfferTopicActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
@@ -39,6 +41,7 @@ public class OfferTopicActivity extends AppCompatActivity {
     private TextView tvFailure;
     private String tutorFullName;
     private String tutorEMail;
+    private HashMap<String, User> userData;
 
 
     @Override
@@ -51,23 +54,14 @@ public class OfferTopicActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btn_offer_topic_submit);
         btnCancel = findViewById(R.id.btn_offer_topic_cancel);
         tvFailure = findViewById(R.id.tv_offer_topic_failure);
-
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = firebaseAuth.getCurrentUser();
         tutorEMail = user.getEmail();
 
-        DocumentReference docRef = db.collection("users").document(tutorEMail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    User userData = doc.toObject(User.class);
-                    tutorFullName = userData.getName()+", "+userData.getFirstName();
-                }
-            }
-        });
+
+        tutorFullName = userData.get(tutorEMail).getName() + ", " + userData.get(tutorEMail).getFirstName();
 
 
 
@@ -87,7 +81,9 @@ public class OfferTopicActivity extends AppCompatActivity {
                             tutorFullName);
                     db.collection("OfferedTopics").add(topic);
                     Toast.makeText(OfferTopicActivity.this, "Das Thema für die Abschlussarbeit ist ausgeschrieben!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(OfferTopicActivity.this, TutorActivity.class));
+                    Intent intent = new Intent(OfferTopicActivity.this, TutorActivity.class);
+                    intent.putExtra("map", userData);
+                    startActivity(intent);
                     finish();
                 }
             }
@@ -96,7 +92,9 @@ public class OfferTopicActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(OfferTopicActivity.this, TutorActivity.class));
+                Intent intent = new Intent(OfferTopicActivity.this, TutorActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });

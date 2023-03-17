@@ -72,7 +72,6 @@ public class TutorViewAdapter extends ListAdapter<Exam, TutorViewAdapter.ExamHol
 
     public void setExams(List<Exam> exams){
         this.exams = exams;
-        notifyDataSetChanged();
     }
 
     class ExamHolder extends RecyclerView.ViewHolder {

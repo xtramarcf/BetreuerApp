@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.fortmeier.betreuerapp.model.ChatMessage;
 import com.fortmeier.betreuerapp.model.Topic;
 import com.fortmeier.betreuerapp.model.User;
+import com.fortmeier.betreuerapp.tutor.ChatOverviewActivity;
+import com.fortmeier.betreuerapp.tutor.TutorActivity;
 import com.fortmeier.betreuerapp.viewmodel.ChatViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
@@ -56,9 +60,9 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser fbUser;
     private FirebaseFirestore fdb;
-    private DatabaseReference db;
     private String userEMail;
     private String contactEMail;
+    private HashMap<String, User> userData;
 
     public static final String MESSAGES = "messages";
     public static final String CONTACTS = "contacts";
@@ -73,12 +77,13 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view_chat);
         list = new ArrayList<>();
 
-        db = FirebaseDatabase.getInstance().getReference();
         fdb = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
         userEMail = fbUser.getEmail();
         contactEMail = (String) getIntent().getSerializableExtra("E-Mail");
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
+
 
         fdb.collection("users").document(contactEMail).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -98,9 +103,12 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String msg = message.getEditText().getText().toString();
                 message.getEditText().setText("");
+                Date date = new Date();
+                Long timeStampLong = date.getTime();
+                String timeStampString = timeStampLong.toString();
                 String timeStamp = new SimpleDateFormat("dd-MM-yy HH:mm a").format(Calendar.getInstance().getTime());
 
-                ChatMessage chatMessage = new ChatMessage(userEMail, msg, timeStamp, Timestamp.now().toString());
+                ChatMessage chatMessage = new ChatMessage(userEMail, msg, timeStamp, timeStampString);
                 addContactData(msg, timeStamp);
                 fdb.collection(MESSAGES).document(userEMail).collection(MESSAGES).document(contactEMail).collection(MESSAGES).add(chatMessage).
                         addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -112,6 +120,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        receiveMessages();
     }
 
     private void addContactData(String message, String timeStamp) {
@@ -120,10 +129,11 @@ public class ChatActivity extends AppCompatActivity {
         Long timeStampLong = date.getTime();
         String timeStampString = timeStampLong.toString();
 
-        fdb.collection("messages").document(userEMail).collection(CONTACTS).whereEqualTo("eMail", contactEMail).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        fdb.collection("messages").document(userEMail).collection(CONTACTS).whereEqualTo("eMail", contactEMail).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value.isEmpty()) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.getResult().isEmpty()) {
+
                     Map<String, Object> contactMap = new ArrayMap<>();
                     contactMap.put("eMail", contactEMail);
                     contactMap.put("lastMessage", userEMail + ": \"" + message + "\"");
@@ -131,17 +141,17 @@ public class ChatActivity extends AppCompatActivity {
                     contactMap.put("timeStampMilli", timeStampString);
                     fdb.collection(MESSAGES).document(userEMail).collection(CONTACTS).add(contactMap);
                 } else {
-                    fdb.collection(MESSAGES).document(userEMail).collection(CONTACTS).document(value.getDocuments().get(0).getId())
+                    fdb.collection(MESSAGES).document(userEMail).collection(CONTACTS).document(task.getResult().getDocuments().get(0).getId())
                             .update("lastMessage", userEMail + ": " + message
                                     , "timeStamp", timeStamp,
                                     "timeStampMilli", timeStampString);
                 }
             }
         });
-        fdb.collection(MESSAGES).document(contactEMail).collection(CONTACTS).whereEqualTo("eMail", userEMail).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        fdb.collection(MESSAGES).document(contactEMail).collection(CONTACTS).whereEqualTo("eMail", userEMail).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value.isEmpty()) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.getResult().isEmpty()) {
                     Map<String, Object> userMap = new ArrayMap<>();
                     userMap.put("eMail", userEMail);
                     userMap.put("lastMessage", userEMail + ": \"" + message + "\"");
@@ -149,13 +159,14 @@ public class ChatActivity extends AppCompatActivity {
                     userMap.put("timeStampMilli", timeStampString);
                     fdb.collection(MESSAGES).document(contactEMail).collection(CONTACTS).add(userMap);
                 } else {
-                    fdb.collection(MESSAGES).document(contactEMail).collection(CONTACTS).document(value.getDocuments().get(0).getId())
+                    fdb.collection(MESSAGES).document(contactEMail).collection(CONTACTS).document(task.getResult().getDocuments().get(0).getId())
                             .update("lastMessage", userEMail + ": " + message
                                     , "timeStamp", timeStamp,
                                     "timeStampMilli", timeStampString);
                 }
             }
         });
+
 
     }
 
@@ -167,19 +178,12 @@ public class ChatActivity extends AppCompatActivity {
                     System.err.println("Failed to receive data: " + error);
                     return;
                 }
-
                 for (DocumentChange dc : value.getDocumentChanges()) {
                     ChatMessage chatMessage = dc.getDocument().toObject(ChatMessage.class);
                     adapter.addMessage(chatMessage);
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        receiveMessages();
     }
 
 
@@ -193,17 +197,34 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.logout) {
-            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-            firebaseAuth.signOut();
+            auth.signOut();
             startActivity(new Intent(ChatActivity.this, MainActivity.class));
             Toast.makeText(this, "Sie wurden erfolgreich ausgeloggt!", Toast.LENGTH_SHORT).show();
             finish();
+            return true;
+        } else if (item.getItemId() == R.id.back_arrow) {
+            fdb.collection("users").whereEqualTo("eMail", userEMail).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (!task.getResult().isEmpty()) {
+                        User user = task.getResult().getDocuments().get(0).toObject(User.class);
+                        if (user.getUserType().equals("Student")) {
+                            Intent intent = new Intent(ChatActivity.this, StudentActivity.class);
+                            intent.putExtra("map", userData);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Intent intent = new Intent(ChatActivity.this, ChatOverviewActivity.class);
+                            intent.putExtra("map", userData);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                }
+            });
             return true;
         } else {
             return false;
         }
     }
-
-
 }
-

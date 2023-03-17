@@ -65,7 +65,6 @@ public class TopicViewAdapter extends ListAdapter<Topic, TopicViewAdapter.TopicH
 
     public void setTopics(List<Topic> topics) {
         this.topics = topics;
-        notifyDataSetChanged();
     }
 
     class TopicHolder extends RecyclerView.ViewHolder {

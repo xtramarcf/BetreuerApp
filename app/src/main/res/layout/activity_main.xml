@@ -27,7 +27,8 @@
         android:layout_below="@+id/label"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="40dp"
-        android:hint="@string/e_mail" />
+        android:hint="@string/e_mail"
+        android:inputType="textNoSuggestions" />
 
     <EditText
         android:id="@+id/password"
@@ -42,12 +43,12 @@
 
     <Button
         android:id="@+id/login"
+        style="@style/TextAppearance.AppCompat.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/password"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="30dp"
-        style="@style/TextAppearance.AppCompat.Button"
         android:text="@string/login"
 
         android:textStyle="bold" />

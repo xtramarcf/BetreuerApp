@@ -63,7 +63,11 @@ public class ChatsOverviewAdapter extends ListAdapter<User, ChatsOverviewAdapter
 
     public void setUsers(List<User> users) {
         this.users = users;
-        notifyDataSetChanged();
+
+    }
+
+    public void setUser(User user){
+        users.add(user);
     }
 
     class UserHolder extends RecyclerView.ViewHolder {

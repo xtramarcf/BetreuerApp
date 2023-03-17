@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.fortmeier.betreuerapp.MainActivity;
 import com.fortmeier.betreuerapp.R;
 import com.fortmeier.betreuerapp.model.Exam;
+import com.fortmeier.betreuerapp.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,6 +41,7 @@ public class EditExamActivity extends AppCompatActivity implements AdapterView.O
     private Button btnSubmit;
     private Button btnCancel;
     private Button btnDelete;
+    private HashMap<String, User> userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class EditExamActivity extends AppCompatActivity implements AdapterView.O
         auth = FirebaseAuth.getInstance();
 
         Exam exam = (Exam) getIntent().getSerializableExtra("Exam");
-
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
         spinnerStatus = (Spinner) findViewById(R.id.spinner_status);
         spinnerStatus.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence> adapterStatus = ArrayAdapter.createFromResource(this,
@@ -88,7 +90,9 @@ public class EditExamActivity extends AppCompatActivity implements AdapterView.O
                 db.collection("Exams").document(exam.getId()).update(examUpdateMap);
 
                 Toast.makeText(EditExamActivity.this, "Änderungen wurden übernommen.", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(EditExamActivity.this, TutorActivity.class));
+                Intent intent = new Intent(EditExamActivity.this, TutorActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });
@@ -96,17 +100,21 @@ public class EditExamActivity extends AppCompatActivity implements AdapterView.O
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(EditExamActivity.this, TutorActivity.class));
+                Intent intent = new Intent(EditExamActivity.this, TutorActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });
-        
+
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 db.collection("Exams").document(exam.getId()).delete();
                 Toast.makeText(EditExamActivity.this, "Item wurde gelöscht!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(EditExamActivity.this, TutorActivity.class));
+                Intent intent = new Intent(EditExamActivity.this, TutorActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });

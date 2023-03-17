@@ -63,7 +63,6 @@ public class StudentViewAdapter extends ListAdapter<User, StudentViewAdapter.Tut
 
     public void setTutors(List<User> tutors) {
         this.tutors = tutors;
-        notifyDataSetChanged();
     }
 
     class TutorHolder extends RecyclerView.ViewHolder {
