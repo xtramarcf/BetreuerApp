@@ -68,6 +68,7 @@ public class TutorActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
+
         if (userType.equals("Zweitgutachter")) {
             addExamTopic.setVisibility(View.GONE);
             btnTopics.setVisibility(View.GONE);
@@ -77,6 +78,7 @@ public class TutorActivity extends AppCompatActivity {
                 public void onItemClick(Exam exam) {
                     Intent intent = new Intent(TutorActivity.this, EditExamActivity.class);
                     intent.putExtra("Exam", exam);
+                    intent.putExtra("map",userData);
                     startActivity(intent);
                     finish();
                 }

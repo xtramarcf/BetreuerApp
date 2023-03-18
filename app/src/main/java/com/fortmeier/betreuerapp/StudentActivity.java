@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class StudentActivity extends AppCompatActivity {
 
@@ -77,16 +78,18 @@ public class StudentActivity extends AppCompatActivity {
 
     public void getAllTutors() {
         List<User> tutors = new ArrayList<>();
-
         db.collection("users").whereEqualTo("userType", "Betreuer")
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             try {
-                                tutors.add(new User(doc.get("name").toString(), doc.get("firstName")
-                                        .toString(), doc.get("eMail").toString(), doc.get("expertises").toString(), ""));
+                                tutors.add(new User(Objects.requireNonNull(doc.get("name")).toString(),
+                                        Objects.requireNonNull(doc.get("firstName")).toString(),
+                                        Objects.requireNonNull(doc.get("eMail")).toString(),
+                                        Objects.requireNonNull(doc.get("expertises")).toString(),
+                                        ""));
                             } catch (Exception e) {
-                                System.out.println(e.getMessage());
+                                System.err.println(e.getMessage());
                             }
                         }
                         adapter.setTutors(tutors);

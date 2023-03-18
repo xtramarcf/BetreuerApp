@@ -17,6 +17,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fortmeier.betreuerapp.model.User;
+import com.fortmeier.betreuerapp.tutor.QuestTutorAddingActivity;
+import com.fortmeier.betreuerapp.tutor.TutorActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
@@ -41,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     private TextView tvExpertises;
     private Button btnRegister;
     private Button btnCancel;
+    private HashMap<String, User> userData;
     private boolean[] selectedExpertises;
     ArrayList<Integer> expertisesList = new ArrayList<>();
     String[] expertisesArray = {"Physik", "Biologie", "Wirtschaft", "Geschichte", "Mathe", "Chemie", "Philosophie", "Spanisch", "Soziologie", "Psychologie"};
@@ -66,6 +70,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         selectedExpertises = new boolean[expertisesArray.length];
 
         firebaseAuth = FirebaseAuth.getInstance();
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
 
         selectCard.setOnClickListener(v -> {
             showExpertisesDialog();
@@ -80,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         spinnerUserType.setAdapter(adapter);
 
         btnRegister.setOnClickListener(view -> {
-            if(validateRegisterData()){
+            if (validateRegisterData()) {
                 registerUser();
             }
         });
@@ -88,18 +93,19 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                intent.putExtra("map", userData);
+                startActivity(intent);
                 finish();
             }
         });
-
 
 
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        if(spinnerUserType.getSelectedItem().toString().equals("Betreuer")){
+        if (spinnerUserType.getSelectedItem().toString().equals("Betreuer")) {
             selectCard.setVisibility(View.VISIBLE);
             tvExpertises.setVisibility(View.VISIBLE);
         } else {
@@ -114,7 +120,6 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
     }
 
 
-
     private void showExpertisesDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
@@ -123,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         builder.setCancelable(false);
 
         builder.setMultiChoiceItems(expertisesArray, selectedExpertises, (dialogInterface, which, isChecked) -> {
-            if(isChecked){
+            if (isChecked) {
                 expertisesList.add(which);
             } else {
                 expertisesList.remove(which);
@@ -137,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
                 //check condition
 
-                if(j != expertisesList.size() -1){
+                if (j != expertisesList.size() - 1) {
                     stringBuilder.append(", ");
                 }
 
@@ -155,9 +160,9 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         builder.show();
     }
 
-    private boolean validateRegisterData () {
+    private boolean validateRegisterData() {
         String txt_password = etPassword.getText().toString();
-        if(TextUtils.isEmpty(etName.getText().toString()) || TextUtils.isEmpty(etFirstName.getText().toString()) ||TextUtils.isEmpty(etEmail.getText().toString()) ||TextUtils.isEmpty(txt_password)){
+        if (TextUtils.isEmpty(etName.getText().toString()) || TextUtils.isEmpty(etFirstName.getText().toString()) || TextUtils.isEmpty(etEmail.getText().toString()) || TextUtils.isEmpty(txt_password)) {
             Toast.makeText(this, "Bitte alle Felder ausfüllen!", Toast.LENGTH_SHORT).show();
             return false;
         } else if (txt_password.length() < 6) {
@@ -168,7 +173,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         }
     }
 
-    private void loadUserDataInDB(){
+    private void loadUserDataInDB() {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -177,7 +182,7 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
         String txtEmail = etEmail.getText().toString();
         String txtUserType = spinnerUserType.getSelectedItem().toString();
         String txtExpertises = null;
-        if(!tvSelectExpertises.getText().toString().equals("Wähle Fachgebiete") || !tvSelectExpertises.getText().toString().equals("")){
+        if (!tvSelectExpertises.getText().toString().equals("Wähle Fachgebiete") || !tvSelectExpertises.getText().toString().equals("")) {
             txtExpertises = tvSelectExpertises.getText().toString();
         }
 
@@ -197,17 +202,20 @@ public class RegisterActivity extends AppCompatActivity implements AdapterView.O
 
     }
 
-    private void registerUser () {
+    private void registerUser() {
         String txtEmail = etEmail.getText().toString();
         String txtPassword = etPassword.getText().toString();
 
         firebaseAuth.createUserWithEmailAndPassword(txtEmail, txtPassword).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     loadUserDataInDB();
-                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                    intent.putExtra("map", userData);
+                    startActivity(intent);
                     finish();
+
                 } else {
                     Toast.makeText(RegisterActivity.this, "Registrierung fehlgeschlagen!", Toast.LENGTH_SHORT).show();
                 }

@@ -99,21 +99,22 @@ public class ChatOverviewActivity extends AppCompatActivity {
     }
 
     private void getAllUserChats() {
-        db.collection("messages").document(userEmail).collection("contacts").orderBy("timeStampMilli", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
-            List<User> chatContactList = task.getResult().toObjects(User.class);
-            List<User> userChats = new ArrayList<>();
-            for (User contact : chatContactList) {
-                User user = new User();
-                user.setEMail(contact.getEMail());
-                user.setLastMessage(contact.getLastMessage());
-                user.setTimeStamp(contact.getTimeStamp());
-                user.setName(userData.get(contact.getEMail()).getName());
-                user.setFirstName(userData.get(contact.getEMail()).getFirstName());
-                userChats.add(user);
-            }
-            adapter.setUsers(userChats);
-            adapter.submitList(userChats);
-        });
+        db.collection("messages").document(userEmail).collection("contacts")
+                .orderBy("timeStampMilli", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
+                    List<User> chatContactList = task.getResult().toObjects(User.class);
+                    List<User> userChats = new ArrayList<>();
+                    for (User contact : chatContactList) {
+                        User user = new User();
+                        user.setEMail(contact.getEMail());
+                        user.setLastMessage(contact.getLastMessage());
+                        user.setTimeStamp(contact.getTimeStamp());
+                        user.setName(userData.get(contact.getEMail()).getName());
+                        user.setFirstName(userData.get(contact.getEMail()).getFirstName());
+                        userChats.add(user);
+                    }
+                    adapter.setUsers(userChats);
+                    adapter.submitList(userChats);
+                });
     }
 
 

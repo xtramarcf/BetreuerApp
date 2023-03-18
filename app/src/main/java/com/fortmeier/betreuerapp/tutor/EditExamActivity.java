@@ -57,6 +57,7 @@ public class EditExamActivity extends AppCompatActivity implements AdapterView.O
         auth = FirebaseAuth.getInstance();
 
         Exam exam = (Exam) getIntent().getSerializableExtra("Exam");
+        userData = new HashMap<>();
         userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
         spinnerStatus = (Spinner) findViewById(R.id.spinner_status);
         spinnerStatus.setOnItemSelectedListener(this);

@@ -54,8 +54,12 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        userData = (HashMap<String, User>) getIntent().getSerializableExtra("map");
+
         btnRegister.setOnClickListener(view -> {
-            startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            intent.putExtra("map", userData);
+            startActivity(intent);
             finish();
         });
 
@@ -107,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     String userType = doc.getData().get("userType").toString();
                     switch(userType){
                         case "Betreuer":
+                        case "Zweitgutachter":
                             Intent intent = new Intent(MainActivity.this, TutorActivity.class);
                             intent.putExtra("map", userData);
                             startActivity(intent);
@@ -116,12 +121,6 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent1 = new Intent(MainActivity.this, StudentActivity.class);
                             intent1.putExtra("map", userData);
                             startActivity(intent1);
-                            finish();
-                            break;
-                        case "Zweitgutachter":
-                            Intent intent2 = new Intent(MainActivity.this, TutorActivity.class);
-                            intent2.putExtra("map", userData);
-                            startActivity(intent2);
                             finish();
                             break;
                         default:
