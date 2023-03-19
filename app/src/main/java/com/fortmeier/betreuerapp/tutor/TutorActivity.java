@@ -76,11 +76,13 @@ public class TutorActivity extends AppCompatActivity {
             adapter.setOnItemClickListener(new TutorViewAdapter.OnItemCLickListener() {
                 @Override
                 public void onItemClick(Exam exam) {
-                    Intent intent = new Intent(TutorActivity.this, EditExamActivity.class);
-                    intent.putExtra("Exam", exam);
-                    intent.putExtra("map",userData);
-                    startActivity(intent);
-                    finish();
+                    if(exam.getTutorFullName().equals(userName+", "+userFirstName)){
+                        Intent intent = new Intent(TutorActivity.this, EditExamActivity.class);
+                        intent.putExtra("Exam", exam);
+                        intent.putExtra("map",userData);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             });
         }
@@ -149,6 +151,7 @@ public class TutorActivity extends AppCompatActivity {
                                             doc.get("tutorFullName").toString());
                                     exam.setId(doc.getId());
                                     String fullUserName = userName + ", " + userFirstName;
+
                                     if (exam.getSecondAssessorName().equals(userName) && exam.getSecondAssessorFirstName().equals(userFirstName)
                                             || exam.getTutorFullName().equals(fullUserName)) {
                                         exams.add(exam);
